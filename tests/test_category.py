@@ -8,7 +8,7 @@ def test_category_init():
 
     assert category.name == "Телефоны"
     assert category.description == "Мобильные устройства"
-    assert category.products == [product]
+    assert category.products == "Samsung, 1000.0 руб. Остаток: 2 шт.\n"
 
 
 def test_category_counters():
@@ -22,3 +22,28 @@ def test_category_counters():
 
     assert Category.category_count == initial_categories + 1
     assert Category.product_count == initial_products + 2
+
+
+def test_add_product():
+    product1 = Product("Samsung", "Смартфон", 1000.0, 2)
+    product2 = Product("Apple", "Смартфон", 2000.0, 3)
+    category = Category("Телефоны", "Мобильные устройства", [product1])
+
+    initial_count = Category.product_count
+
+    category.add_product(product2)
+
+    assert "Apple, 2000.0 руб. Остаток: 3 шт.\n" in category.products
+    assert Category.product_count == initial_count + 1
+
+
+def test_products_string():
+    product1 = Product("Samsung", "Смартфон", 1000.0, 2)
+    product2 = Product("Apple", "Смартфон", 2000.0, 3)
+    category = Category("Телефоны", "Мобильные устройства", [product1, product2])
+
+    expected = (
+        "Samsung, 1000.0 руб. Остаток: 2 шт.\n" "Apple, 2000.0 руб. Остаток: 3 шт.\n"
+    )
+
+    assert category.products == expected
