@@ -16,7 +16,7 @@ class Product:
 
     @classmethod
     def new_product(cls, d: dict, ex_products: list["Product"]) -> "Product":
-        """Создаёт товар или обновляет существующий товар с таким же названием."""
+        """Создаёт товар или обновляет существующий с таким же названием."""
         name = d["name"]
         description = d["description"]
         price = float(d["price"])
@@ -38,7 +38,7 @@ class Product:
 
     @price.setter
     def price(self, new_price: float) -> None:
-        """Проверяет новую цену и при необходимости запрашивает подтверждение."""
+        """Проверяет цену и запрашивает подтверждение при её снижении."""
         if new_price <= 0:
             print("Цена не должна быть нулевая или отрицательная")
         elif hasattr(self, "_Product__price") and new_price < self.__price:
@@ -51,3 +51,13 @@ class Product:
                 self.__price = new_price
         else:
             self.__price = new_price
+
+    def __str__(self) -> str:
+        """Возвращает название товара, цену и количество на складе."""
+        return f"{self.name}, {self.price:g} руб. " f"Остаток: {self.quantity} шт."
+
+    def __add__(self, other: "Product") -> float:
+        """Возвращает общую стоимость остатков двух товаров."""
+        first_sum = self.quantity * self.price
+        second_sum = other.quantity * other.price
+        return first_sum + second_sum
