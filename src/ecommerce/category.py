@@ -24,11 +24,21 @@ class Category:
 
     @property
     def products(self) -> str:
-        """Возвращает товары категории в виде строки."""
-        prod = []
+        """Возвращает текстовое представление товаров категории."""
+        prod: list[str] = []
         for product in self.__products:
             prod.append(
                 f"{product.name}, {product.price} руб. "
                 f"Остаток: {product.quantity} шт.\n"
             )
         return "".join(prod)
+
+    @property
+    def products_list(self) -> list[Product]:
+        """Возвращает копию списка товаров категории."""
+        return self.__products.copy()
+
+    def __str__(self) -> str:
+        """Возвращает название категории и общее количество единиц товаров."""
+        total_quantity: int = sum(product.quantity for product in self.__products)
+        return f"{self.name}, количество продуктов: " f"{total_quantity} шт."

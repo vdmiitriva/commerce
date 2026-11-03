@@ -47,3 +47,12 @@ def test_products_string():
     )
 
     assert category.products == expected
+
+
+def test_category_str():
+    product1 = Product("Samsung", "Смартфон", 80000.0, 5)
+    product2 = Product("iPhone", "Смартфон", 100000.0, 3)
+
+    category = Category("Смартфоны", "Мобильные телефоны", [product1, product2])
+
+    assert str(category) == ("Смартфоны, количество продуктов: 8 шт.")
