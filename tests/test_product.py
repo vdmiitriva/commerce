@@ -80,3 +80,16 @@ def test_price_setter_decrease_cancelled(monkeypatch):
     product.price = 800.0
 
     assert product.price == 1000.0
+
+
+def test_product_str():
+    product = Product("Samsung", "Смартфон", 80.0, 15)
+
+    assert str(product) == "Samsung, 80 руб. Остаток: 15 шт."
+
+
+def test_product_add():
+    product1 = Product("Samsung", "Смартфон", 100.0, 2)
+    product2 = Product("iPhone", "Смартфон", 200.0, 3)
+
+    assert product1 + product2 == 800.0
