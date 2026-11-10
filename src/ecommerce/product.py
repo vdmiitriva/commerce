@@ -58,6 +58,51 @@ class Product:
 
     def __add__(self, other: "Product") -> float:
         """Возвращает общую стоимость остатков двух товаров."""
-        first_sum = self.quantity * self.price
-        second_sum = other.quantity * other.price
-        return first_sum + second_sum
+        if type(other) == type(self):
+            first_sum = self.quantity * self.price
+            second_sum = other.quantity * other.price
+            return first_sum + second_sum
+        else:
+            raise TypeError("Можно складывать только товары одного класса")
+
+
+class Smartphone(Product):
+    """Представляет смартфон."""
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        efficiency: float,
+        model: str,
+        memory: int,
+        color: str,
+    ) -> None:
+        """Инициализирует смартфон с заданными характеристиками."""
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+
+class LawnGrass(Product):
+    """Представляет газонную траву."""
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        country: str,
+        germination_period: str,
+        color: str,
+    ) -> None:
+        """Инициализирует газонную траву с заданными характеристиками."""
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
