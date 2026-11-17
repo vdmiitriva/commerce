@@ -1,6 +1,6 @@
 import pytest
 
-from ecommerce.product import LawnGrass, Product, Smartphone
+from ecommerce.product import BaseProduct, LawnGrass, Product, Smartphone
 
 
 def test_product_init():
@@ -201,3 +201,28 @@ def test_product_add_smartphone():
 
     with pytest.raises(TypeError):
         product + smartphone
+
+def test_base_product_is_abstract():
+    with pytest.raises(TypeError):
+        BaseProduct("Товар", "Описание", 100.0, 5)
+
+
+def test_product_inherits_base_product():
+    product = Product("Товар", "Описание", 100.0, 5)
+
+    assert isinstance(product, BaseProduct)
+
+
+def test_product_repr():
+    product = Product("Samsung", "Смартфон", 1000.0, 2)
+
+    assert repr(product) == "Product('Samsung', 'Смартфон', 1000.0, 2)"
+
+
+def test_product_mixin_output(capsys):
+    Product("Samsung", "Смартфон", 1000.0, 2)
+
+    output = capsys.readouterr().out
+
+    assert "Создан объект класса Product" in output
+    assert "Product('Samsung', 'Смартфон', 1000.0, 2)" in output

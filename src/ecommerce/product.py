@@ -1,18 +1,68 @@
-class Product:
-    """Представляет товар с названием, описанием, ценой и количеством."""
+from abc import ABC, abstractmethod
 
-    name: str
-    description: str
-    quantity: int
+
+class BaseProduct(ABC):
+    """Абстрактный базовый класс для товаров."""
 
     def __init__(
         self, name: str, description: str, price: float, quantity: int
     ) -> None:
-        """Инициализирует товар с заданными характеристиками."""
+        """Инициализирует общие характеристики товара."""
         self.name = name
         self.description = description
         self.__price = price
         self.quantity = quantity
+
+    @property
+    def price(self) -> float:
+        """Возвращает текущую цену товара."""
+        return self.__price
+
+    @price.setter
+    def price(self, new_price: float) -> None:
+        """Проверяет цену и запрашивает подтверждение при её снижении."""
+        if new_price <= 0:
+            print("Цена не должна быть нулевая или отрицательная")
+        elif new_price < self.__price:
+            answer = input(
+                "Цена ниже прошлой.\n"
+                "Если вы точно хотите изменить её, введите [y].\n"
+                "Чтобы оставить прошлую цену, введите [n]. "
+            )
+            if answer == "y":
+                self.__price = new_price
+        else:
+            self.__price = new_price
+
+    @abstractmethod
+    def __str__(self) -> str:
+        """Возвращает строковое представление товара."""
+        pass
+
+
+class ProductMixin:
+    """Миксин для вывода информации о создании объекта."""
+
+    def __init__(self, *args, **kwargs) -> None:
+        """Выводит информацию о созданном объекте."""
+        super().__init__(*args, **kwargs)
+        print(f"Создан объект класса {type(self).__name__}: {self!r}")
+
+
+class Product(ProductMixin, BaseProduct):
+    """Представляет товар с названием, описанием, ценой и количеством."""
+
+    def __str__(self) -> str:
+        """Возвращает название товара, цену и количество на складе."""
+        return f"{self.name}, {self.price:g} руб. Остаток: {self.quantity} шт."
+
+    def __repr__(self) -> str:
+        """Возвращает формальное представление товара."""
+        return (
+            f"{type(self).__name__}("
+            f"{self.name!r}, {self.description!r}, "
+            f"{self.price!r}, {self.quantity!r})"
+        )
 
     @classmethod
     def new_product(cls, d: dict, ex_products: list["Product"]) -> "Product":
@@ -31,39 +81,13 @@ class Product:
 
         return cls(name, description, price, quantity)
 
-    @property
-    def price(self) -> float:
-        """Возвращает текущую цену товара."""
-        return self.__price
-
-    @price.setter
-    def price(self, new_price: float) -> None:
-        """Проверяет цену и запрашивает подтверждение при её снижении."""
-        if new_price <= 0:
-            print("Цена не должна быть нулевая или отрицательная")
-        elif hasattr(self, "_Product__price") and new_price < self.__price:
-            answer = input(
-                "Цена ниже прошлой.\n"
-                "Если вы точно хотите изменить её, введите [y].\n"
-                "Чтобы оставить прошлую цену, введите [n]. "
-            )
-            if answer == "y":
-                self.__price = new_price
-        else:
-            self.__price = new_price
-
-    def __str__(self) -> str:
-        """Возвращает название товара, цену и количество на складе."""
-        return f"{self.name}, {self.price:g} руб. " f"Остаток: {self.quantity} шт."
-
     def __add__(self, other: "Product") -> float:
         """Возвращает общую стоимость остатков двух товаров."""
         if type(other) == type(self):
             first_sum = self.quantity * self.price
             second_sum = other.quantity * other.price
             return first_sum + second_sum
-        else:
-            raise TypeError("Можно складывать только товары одного класса")
+        raise TypeError("Можно складывать только товары одного класса")
 
 
 class Smartphone(Product):

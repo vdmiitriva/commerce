@@ -1,7 +1,8 @@
 from ecommerce.product import Product
+from ecommerce.base import BaseEntity
 
 
-class Category:
+class Category(BaseEntity):
     """Представляет категорию товаров."""
 
     name: str
