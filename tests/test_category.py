@@ -95,3 +95,43 @@ def test_category_str():
     category = Category("Смартфоны", "Мобильные телефоны", [product1, product2])
 
     assert str(category) == "Смартфоны, количество продуктов: 8 шт."
+
+
+def test_middle_price():
+    product1 = Product("Samsung", "Смартфон", 1000.0, 2)
+    product2 = Product("Apple", "Смартфон", 2000.0, 3)
+    category = Category("Телефоны", "Мобильные устройства", [product1, product2])
+
+    assert category.middle_price() == 1500.0
+
+
+def test_middle_price_empty_category():
+    category = Category("Телефоны", "Мобильные устройства", [])
+
+    assert category.middle_price() == 0
+
+
+def test_add_product_success_message(capsys):
+    product = Product("Samsung", "Смартфон", 1000.0, 2)
+    category = Category("Телефоны", "Мобильные устройства", [])
+
+    category.add_product(product)
+
+    captured = capsys.readouterr()
+
+    assert "успешно добавлен в категорию" in captured.out
+    assert "Обработка добавления товара завершена" in captured.out
+
+
+def test_add_product_zero_quantity(capsys):
+    product = Product("Samsung", "Смартфон", 1000.0, 2)
+    product.quantity = 0
+    category = Category("Телефоны", "Мобильные устройства", [])
+
+    category.add_product(product)
+
+    captured = capsys.readouterr()
+
+    assert "Товар с нулевым количеством не может быть добавлен" in captured.out
+    assert "Обработка добавления товара завершена" in captured.out
+    assert category.products_list == []

@@ -8,6 +8,9 @@ class BaseProduct(ABC):
         self, name: str, description: str, price: float, quantity: int
     ) -> None:
         """Инициализирует общие характеристики товара."""
+        if quantity == 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен")
+
         self.name = name
         self.description = description
         self.__price = price
@@ -83,11 +86,12 @@ class Product(ProductMixin, BaseProduct):
 
     def __add__(self, other: "Product") -> float:
         """Возвращает общую стоимость остатков двух товаров."""
-        if type(other) == type(self):
-            first_sum = self.quantity * self.price
-            second_sum = other.quantity * other.price
-            return first_sum + second_sum
-        raise TypeError("Можно складывать только товары одного класса")
+        if self.__class__ is not other.__class__:
+            raise TypeError("Можно складывать только товары одного класса")
+
+        first_sum = self.quantity * self.price
+        second_sum = other.quantity * other.price
+        return first_sum + second_sum
 
 
 class Smartphone(Product):

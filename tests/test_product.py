@@ -202,6 +202,7 @@ def test_product_add_smartphone():
     with pytest.raises(TypeError):
         product + smartphone
 
+
 def test_base_product_is_abstract():
     with pytest.raises(TypeError):
         BaseProduct("Товар", "Описание", 100.0, 5)
@@ -226,3 +227,11 @@ def test_product_mixin_output(capsys):
 
     assert "Создан объект класса Product" in output
     assert "Product('Samsung', 'Смартфон', 1000.0, 2)" in output
+
+
+def test_product_zero_quantity():
+    with pytest.raises(
+        ValueError,
+        match="Товар с нулевым количеством не может быть добавлен",
+    ):
+        Product("Samsung", "Смартфон", 1000.0, 0)
