@@ -1,5 +1,7 @@
+import pytest
+
 from ecommerce.category import Category
-from ecommerce.product import Product
+from ecommerce.product import LawnGrass, Product, Smartphone
 
 
 def test_category_init():
@@ -37,6 +39,43 @@ def test_add_product():
     assert Category.product_count == initial_count + 1
 
 
+def test_add_smartphone():
+    smartphone = Smartphone("Samsung", "256GB", 1000.0, 2, 95.5, "S23", 256, "Серый")
+    category = Category("Телефоны", "Мобильные устройства", [])
+
+    category.add_product(smartphone)
+
+    assert smartphone in category.products_list
+
+
+def test_add_lawn_grass():
+    grass = LawnGrass(
+        "Газонная трава",
+        "Описание",
+        500.0,
+        20,
+        "Россия",
+        "7 дней",
+        "Зеленый",
+    )
+    category = Category("Трава", "Газонная трава", [])
+
+    category.add_product(grass)
+
+    assert grass in category.products_list
+
+
+def test_add_invalid_product():
+    category = Category("Телефоны", "Мобильные устройства", [])
+    initial_count = Category.product_count
+
+    with pytest.raises(TypeError):
+        category.add_product("Not a product")
+
+    assert category.products_list == []
+    assert Category.product_count == initial_count
+
+
 def test_products_string():
     product1 = Product("Samsung", "Смартфон", 1000.0, 2)
     product2 = Product("Apple", "Смартфон", 2000.0, 3)
@@ -47,3 +86,52 @@ def test_products_string():
     )
 
     assert category.products == expected
+
+
+def test_category_str():
+    product1 = Product("Samsung", "Смартфон", 80000.0, 5)
+    product2 = Product("iPhone", "Смартфон", 100000.0, 3)
+
+    category = Category("Смартфоны", "Мобильные телефоны", [product1, product2])
+
+    assert str(category) == "Смартфоны, количество продуктов: 8 шт."
+
+
+def test_middle_price():
+    product1 = Product("Samsung", "Смартфон", 1000.0, 2)
+    product2 = Product("Apple", "Смартфон", 2000.0, 3)
+    category = Category("Телефоны", "Мобильные устройства", [product1, product2])
+
+    assert category.middle_price() == 1500.0
+
+
+def test_middle_price_empty_category():
+    category = Category("Телефоны", "Мобильные устройства", [])
+
+    assert category.middle_price() == 0
+
+
+def test_add_product_success_message(capsys):
+    product = Product("Samsung", "Смартфон", 1000.0, 2)
+    category = Category("Телефоны", "Мобильные устройства", [])
+
+    category.add_product(product)
+
+    captured = capsys.readouterr()
+
+    assert "успешно добавлен в категорию" in captured.out
+    assert "Обработка добавления товара завершена" in captured.out
+
+
+def test_add_product_zero_quantity(capsys):
+    product = Product("Samsung", "Смартфон", 1000.0, 2)
+    product.quantity = 0
+    category = Category("Телефоны", "Мобильные устройства", [])
+
+    category.add_product(product)
+
+    captured = capsys.readouterr()
+
+    assert "Товар с нулевым количеством не может быть добавлен" in captured.out
+    assert "Обработка добавления товара завершена" in captured.out
+    assert category.products_list == []
